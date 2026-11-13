@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>Roy Star: IDA - Master Admin Panel</title>
+    <style>
+        body { background: #121212; color: #fff; font-family: sans-serif; padding: 20px; }
+        .box { background: #1e1e1e; padding: 20px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ff4757; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; background: #2a2a2a; color: #fff; border: 1px solid #444; }
+        button { background: #ff4757; color: white; padding: 10px 20px; border: none; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Roy Star: IDA - Admin Dashboard</h1>
+
+    <!-- 1. Subscription Price Controller -->
+    <div class="box">
+        <h3>Subscription Price Setup</h3>
+        <label>1 Month Price (₹):</label>
+        <input type="number" id="price1M" value="49">
+        <label>3 Months Price (₹):</label>
+        <input type="number" id="price3M" value="412">
+        <button onclick="updatePrices()">Update Prices in Firebase</button>
+    </div>
+
+    <!-- 2. Story Mission & Location Creator -->
+    <div class="box">
+        <h3>Create Story Mission / Location Trigger</h3>
+        <label>Mission Title:</label>
+        <input type="text" id="mTitle" placeholder="Jaise: Kailaras Mandi Fight">
+        
+        <label>Location Name (Jahan mission trigger hoga):</label>
+        <input type="text" id="mLocation" placeholder="Kailaras_Mandi">
+
+        <label>Story Script / Dialogue (Hindi):</label>
+        <textarea id="mStory" rows="3" placeholder="Yahan kahani likho... animation aur voice apne aap trigger hogi"></textarea>
+
+        <button onclick="publishMission()">Publish Mission to Game</button>
+    </div>
+
+    <script>
+        // Yahan apna Firebase Database URL dalna jo tumne use kiya hai
+        const dbURL = "https://ida-roystar-default-rtdb.firebaseio.com/";
+
+        function updatePrices() {
+            const p1 = document.getElementById('price1M').value;
+            const p3 = document.getElementById('price3M').value;
+            
+            fetch(dbURL + 'settings/pricing.json', {
+                method: 'PUT',
+                body: JSON.stringify({ month1: p1, month3: p3 })
+            }).then(() => alert("Subscription Prices Updated Successfully!"));
+        }
+
+        function publishMission() {
+            const title = document.getElementById('mTitle').value;
+            const location = document.getElementById('mLocation').value;
+            const story = document.getElementById('mStory').value;
+
+            const missionData = { title, location, story, timestamp: Date.now() };
+
+            fetch(dbURL + 'missions/.json', {
+                method: 'POST',
+                body: JSON.stringify(missionData)
+            }).then(() => alert("Mission Published Successfully to Map Location!"));
+        }
+    </script>
+</body>
+</html>
